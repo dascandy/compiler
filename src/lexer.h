@@ -1,6 +1,9 @@
+#pragma once
 
+#include <string_view>
 
-enum class Token {
+enum Type {
+  TOK_NONE = 0,
   TOK_EXCL = '!',
   TOK_KEYWORD_not = TOK_EXCL,
   TOK_PERCENT = '%',
@@ -19,6 +22,7 @@ enum class Token {
   TOK_COLON = ':',
   TOK_QUESTION = '?',
   TOK_SLASH = '/',
+  TOK_SLASH_EQ = 0x80 | '/',
   TOK_DOT = '.',
   TOK_LPAREN = '(',
   TOK_RPAREN = ')',
@@ -47,20 +51,18 @@ enum class Token {
   TOK_PERCENT_EQ = 0x80 | '%',
   TOK_PLUS_EQ = 0x80 | '+',
   TOK_LEFTSHIFT = 0x100,
-  TOK_RSHIFT,
+  TOK_RIGHTSHIFT,
   TOK_AMP_AMP,
   TOK_KEYWORD_and = TOK_AMP_AMP,
   TOK_PIPE_PIPE,
   TOK_KEYWORD_or = TOK_PIPE_PIPE,
   TOK_STRING,
   TOK_CHAR,
+  TOK_NUMBER,
   TOK_IDENTIFIER,
   TOK_KEYWORD_alignas,
   TOK_KEYWORD_alignof,
   TOK_KEYWORD_asm,
-  TOK_KEYWORD_atomic_cancel,
-  TOK_KEYWORD_atomic_commit,
-  TOK_KEYWORD_atomic_noexcept,
   TOK_KEYWORD_auto,
   TOK_KEYWORD_bool,
   TOK_KEYWORD_break,
@@ -70,14 +72,10 @@ enum class Token {
   TOK_KEYWORD_char16_t,
   TOK_KEYWORD_char32_t,
   TOK_KEYWORD_class,
-  TOK_KEYWORD_concept,
   TOK_KEYWORD_const,
   TOK_KEYWORD_constexpr,
   TOK_KEYWORD_const_cast,
   TOK_KEYWORD_continue,
-  TOK_KEYWORD_co_await,
-  TOK_KEYWORD_co_return,
-  TOK_KEYWORD_co_yield,
   TOK_KEYWORD_decltype,
   TOK_KEYWORD_default,
   TOK_KEYWORD_delete,
@@ -87,7 +85,6 @@ enum class Token {
   TOK_KEYWORD_else,
   TOK_KEYWORD_enum,
   TOK_KEYWORD_explicit,
-  TOK_KEYWORD_export,
   TOK_KEYWORD_extern,
   TOK_KEYWORD_false,
   TOK_KEYWORD_float,
@@ -95,11 +92,9 @@ enum class Token {
   TOK_KEYWORD_friend,
   TOK_KEYWORD_goto,
   TOK_KEYWORD_if,
-  TOK_KEYWORD_import,
   TOK_KEYWORD_inline,
   TOK_KEYWORD_int,
   TOK_KEYWORD_long,
-  TOK_KEYWORD_module,
   TOK_KEYWORD_mutable,
   TOK_KEYWORD_namespace,
   TOK_KEYWORD_new,
@@ -111,7 +106,6 @@ enum class Token {
   TOK_KEYWORD_public,
   TOK_KEYWORD_register,
   TOK_KEYWORD_reinterpret_cast,
-  TOK_KEYWORD_requires,
   TOK_KEYWORD_return,
   TOK_KEYWORD_short,
   TOK_KEYWORD_signed,
@@ -121,7 +115,6 @@ enum class Token {
   TOK_KEYWORD_static_cast,
   TOK_KEYWORD_struct,
   TOK_KEYWORD_switch,
-  TOK_KEYWORD_synchronized,
   TOK_KEYWORD_template,
   TOK_KEYWORD_this,
   TOK_KEYWORD_thread_local,
@@ -141,10 +134,56 @@ enum class Token {
   TOK_KEYWORD_while,
   TOK_KEYWORD_override,
   TOK_KEYWORD_final,
+
+
+/*
+  Future only stuff
   TOK_KEYWORD_transaction_safe,
   TOK_KEYWORD_transaction_safe_dynamic,
+  TOK_KEYWORD_synchronized,
+  TOK_KEYWORD_requires,
+  TOK_KEYWORD_export,
+  TOK_KEYWORD_import,
+  TOK_KEYWORD_atomic_cancel,
+  TOK_KEYWORD_atomic_commit,
+  TOK_KEYWORD_atomic_noexcept,
+  TOK_KEYWORD_concept,
+  TOK_KEYWORD_co_await,
+  TOK_KEYWORD_co_return,
+  TOK_KEYWORD_co_yield,
+  TOK_KEYWORD_module,
+*/
+};
+struct Token {
+  Token(Type t, std::string_view text) : t(t), text(text) {}
+  Token() {}
+  std::string_view text;
+  Type t;
+};
 
-  TOK_KEYWORD_,
+class Lexer {
+public:
+  Lexer(std::string_view str) 
+  : str(str)
+  { 
+    readToken(); 
+  }
+  std::string_view str;
+  size_t cur = 0;
+  Token token;
+  void operator++() {
+    readToken();
+  }
+  void readToken();
+  Lexer& begin() { return *this; }
+  struct sentinel {};
+  sentinel end() { return sentinel{}; }
+  Token& operator*() 
+  { 
+    return token; 
+  }
+  bool operator==(const sentinel&) { return cur > str.size(); }
+  bool operator!=(const sentinel&) { return cur <= str.size(); }
 };
 
 
