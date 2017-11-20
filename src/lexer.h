@@ -1,9 +1,11 @@
 #pragma once
 
 #include <string_view>
+#include <ostream>
 
 enum Type {
   TOK_NONE = 0,
+  TOK_HASH = '#',
   TOK_EXCL = '!',
   TOK_KEYWORD_not = TOK_EXCL,
   TOK_PERCENT = '%',
@@ -20,17 +22,19 @@ enum Type {
   TOK_KEYWORD_bitor = TOK_PIPE,
   TOK_SEMICOLON = ';',
   TOK_COLON = ':',
+  TOK_SCOPE = ':' | 0x80,
   TOK_QUESTION = '?',
   TOK_SLASH = '/',
   TOK_SLASH_EQ = 0x80 | '/',
   TOK_DOT = '.',
+  TOK_DOT_STAR = '.' | 0x80,
   TOK_LPAREN = '(',
   TOK_RPAREN = ')',
   TOK_LBRACKET = '[',
   TOK_RBRACKET = ']',
   TOK_LCURLY = '{',
   TOK_RCURLY = '}',
-  TOK_TIMES = '*',
+  TOK_STAR = '*',
   TOK_AMP = '&',
   TOK_KEYWORD_bitand = TOK_AMP,
   TOK_PLUS = '+',
@@ -45,17 +49,24 @@ enum Type {
   TOK_MINUS_EQ = 0x80 | '-',
   TOK_EXCL_EQ = 0x80 | '!',
   TOK_KEYWORD_not_eq = TOK_EXCL_EQ,
-  TOK_TIMES_EQ = 0x80 | '*',
+  TOK_STAR_EQ = 0x80 | '*',
   TOK_AMP_EQ = 0x80 | '&',
   TOK_KEYWORD_and_eq = TOK_AMP_EQ,
   TOK_PERCENT_EQ = 0x80 | '%',
   TOK_PLUS_EQ = 0x80 | '+',
   TOK_LEFTSHIFT = 0x100,
+  TOK_LEFTSHIFT_EQ,
   TOK_RIGHTSHIFT,
+  TOK_RIGHTSHIFT_EQ,
+  TOK_ARROW,
+  TOK_ARROW_STAR,
   TOK_AMP_AMP,
   TOK_KEYWORD_and = TOK_AMP_AMP,
   TOK_PIPE_PIPE,
   TOK_KEYWORD_or = TOK_PIPE_PIPE,
+  TOK_INCREMENT,
+  TOK_DECREMENT,
+  TOK_SPACESHIP,
   TOK_STRING,
   TOK_CHAR,
   TOK_NUMBER,
@@ -136,8 +147,6 @@ enum Type {
   TOK_KEYWORD_final,
 
 
-/*
-  Future only stuff
   TOK_KEYWORD_transaction_safe,
   TOK_KEYWORD_transaction_safe_dynamic,
   TOK_KEYWORD_synchronized,
@@ -152,8 +161,11 @@ enum Type {
   TOK_KEYWORD_co_return,
   TOK_KEYWORD_co_yield,
   TOK_KEYWORD_module,
-*/
+  TOK_COMMENT_EOL,
+  TOK_COMMENT_COMPOUND,
 };
+
+std::ostream& operator<<(std::ostream& os, Type t);
 struct Token {
   Token(Type t, std::string_view text) : t(t), text(text) {}
   Token() {}
@@ -185,5 +197,4 @@ public:
   bool operator==(const sentinel&) { return cur > str.size(); }
   bool operator!=(const sentinel&) { return cur <= str.size(); }
 };
-
 

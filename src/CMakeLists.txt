@@ -8,8 +8,9 @@
 project(src)
 
 
-add_library(${PROJECT_NAME} STATIC
+add_executable(${PROJECT_NAME}
   lexer.cpp
   lexer.h
+  main.cpp
 )
 
