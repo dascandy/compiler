@@ -27,10 +27,14 @@ public:
 
 translationunit ::= { declaration }
 declaration ::= [ template_decl ] ( var_decl | func_decl | class_decl | enum_decl | using_decl)
-class_decl ::= 'class' <name> [ inheritance_decl ] '{' { ( accessor | declaration ) } '}' ';'
+class_decl ::= 'class' <name> [ inheritance_decl ] '{' { ( accessor | class_member_decl | declaration ) } '}' ';'
 var_decl ::= type_decl <name> { ',' <name> } ';'
-func_decl ::= type_decl <name> '(' arg_decl { ',' arg_decl } '{' { statement } '}'
+func_decl ::= type_decl <name> '(' arg_decl { ',' arg_decl } ')' '{' { statement } '}'
 template_decl ::= 'template' '<' template_arg { ',' template_arg } '>'
+
+class_member_decl ::= <name> '(' arg_decl { ',' arg_decl } ')' '{' { statement } '}'
+                    | '~' <name> '(' ')' '{' { statement } '}'
+                    | operator type_decl '(' ')' '{' { statement } '}'
 
 using_decl ::= 'using' <name> '=' type_decl ';'
 
