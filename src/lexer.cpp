@@ -167,19 +167,24 @@ std::ostream& operator<<(std::ostream& os, Type t) {
 static std::unordered_map<std::string_view, Type> keywords = {
   { "alignas", TOK_KEYWORD_alignas },
   { "alignof", TOK_KEYWORD_alignof },
+  { "and_eq", TOK_KEYWORD_and_eq },
+  { "and", TOK_KEYWORD_and },
   { "asm", TOK_KEYWORD_asm },
   { "auto", TOK_KEYWORD_auto },
+  { "bitand", TOK_KEYWORD_bitand },
+  { "bitor", TOK_KEYWORD_bitor },
   { "bool", TOK_KEYWORD_bool },
   { "break", TOK_KEYWORD_break },
   { "case", TOK_KEYWORD_case },
   { "catch", TOK_KEYWORD_catch },
-  { "char", TOK_KEYWORD_char },
   { "char16_t", TOK_KEYWORD_char16_t },
   { "char32_t", TOK_KEYWORD_char32_t },
+  { "char", TOK_KEYWORD_char },
   { "class", TOK_KEYWORD_class },
-  { "const", TOK_KEYWORD_const },
-  { "constexpr", TOK_KEYWORD_constexpr },
+  { "compl", TOK_KEYWORD_compl },
   { "const_cast", TOK_KEYWORD_const_cast },
+  { "constexpr", TOK_KEYWORD_constexpr },
+  { "const", TOK_KEYWORD_const },
   { "continue", TOK_KEYWORD_continue },
   { "decltype", TOK_KEYWORD_decltype },
   { "default", TOK_KEYWORD_default },
@@ -192,6 +197,7 @@ static std::unordered_map<std::string_view, Type> keywords = {
   { "explicit", TOK_KEYWORD_explicit },
   { "extern", TOK_KEYWORD_extern },
   { "false", TOK_KEYWORD_false },
+  { "final", TOK_KEYWORD_final },
   { "float", TOK_KEYWORD_float },
   { "for", TOK_KEYWORD_for },
   { "friend", TOK_KEYWORD_friend },
@@ -204,8 +210,13 @@ static std::unordered_map<std::string_view, Type> keywords = {
   { "namespace", TOK_KEYWORD_namespace },
   { "new", TOK_KEYWORD_new },
   { "noexcept", TOK_KEYWORD_noexcept },
+  { "not_eq", TOK_KEYWORD_not_eq },
+  { "not", TOK_KEYWORD_not },
   { "nullptr", TOK_KEYWORD_nullptr },
   { "operator", TOK_KEYWORD_operator },
+  { "or_eq", TOK_KEYWORD_or_eq },
+  { "or", TOK_KEYWORD_or },
+  { "override", TOK_KEYWORD_override },
   { "private", TOK_KEYWORD_private },
   { "protected", TOK_KEYWORD_protected },
   { "public", TOK_KEYWORD_public },
@@ -215,9 +226,9 @@ static std::unordered_map<std::string_view, Type> keywords = {
   { "short", TOK_KEYWORD_short },
   { "signed", TOK_KEYWORD_signed },
   { "sizeof", TOK_KEYWORD_sizeof },
-  { "static", TOK_KEYWORD_static },
   { "static_assert", TOK_KEYWORD_static_assert },
   { "static_cast", TOK_KEYWORD_static_cast },
+  { "static", TOK_KEYWORD_static },
   { "struct", TOK_KEYWORD_struct },
   { "switch", TOK_KEYWORD_switch },
   { "template", TOK_KEYWORD_template },
@@ -237,8 +248,8 @@ static std::unordered_map<std::string_view, Type> keywords = {
   { "volatile", TOK_KEYWORD_volatile },
   { "wchar_t", TOK_KEYWORD_wchar_t },
   { "while", TOK_KEYWORD_while },
-  { "override", TOK_KEYWORD_override },
-  { "final", TOK_KEYWORD_final },
+  { "xor_eq", TOK_KEYWORD_xor_eq },
+  { "xor", TOK_KEYWORD_xor },
 };
 
 void Lexer::readToken() {
@@ -405,7 +416,8 @@ void Lexer::readToken() {
         break;
       case TOK_NUMBER:
         switch(str[cur]) {
-          case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': state = TOK_NUMBER; break;
+          case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': 
+          case 'x': case 'X': case 'b': case 'B': case '\'': break;
           default: token = Token(TOK_NUMBER, std::string_view(str.data() + s, cur - s)); return;
         }
         break;
