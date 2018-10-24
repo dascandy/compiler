@@ -8,26 +8,24 @@ struct Declaration {
     Protected,
     Private,
   } accessor = Public;
+  std::string name;
 };
 
 struct Type {};
+struct Expression {};
+struct Statement : Declaration {};
 
-struct Namespace : Declaration {
-  std::string name;
+struct Namespace : Declaration, Type {
+  bool isUnion;
   std::unordered_map<std::string, std::shared_ptr<Type>> types;
   std::unordered_map<std::string, std::unique_ptr<Declaration>> declarations;
   std::vector<Declaration*> friends;
 };
 
-struct Class : Namespace, Type {
-  bool isUnion;
-};
-
 struct Variable : Declaration {
   bool isStatic;
   std::shared_ptr<Type> type;
-  std::string name;
-  std::unique_ptr<Expression> initial_value;
+  std::shared_ptr<Expression> initial_value;
 };
 
 struct Function : Declaration {
@@ -40,19 +38,15 @@ struct Function : Declaration {
   bool isConst;
   bool isVolatile;
   std::vector<Variable> argumentlist;
+  std::unordered_map<std::string, std::shared_ptr<Expression>> initializerlist;
   std::unique_ptr<Scope> body;
 };
  
-struct Structor : Function {
-  std::unordered_map<std::string, std::unique_ptr<Expression>> initializerlist;
-  bool constructor;
-};
-
 struct Scope {
   std::vector<std::unique_ptr<Declaration>> declarations;
 };
 
-struct NamedReference : Type {
+struct NamedType : Type {
   std::string name;
 };
 
@@ -75,56 +69,53 @@ struct Enum : Type, Declaration {
   std::unordered_map<std::string, size_t> values;
 };
 
-struct Expression {
-};
-
 struct UnaryPostfixExpression : Expression {
-  std::unique_ptr<Expression> lhs;
+  std::shared_ptr<Expression> lhs;
   std::string operatorname;
 };
 
 struct UnaryPrefixExpression : Expression {
-  std::unique_ptr<Expression> rhs;
+  std::shared_ptr<Expression> rhs;
   std::string operatorname;
 };
 
 struct BinaryExpression : Expression {
-  std::unique_ptr<Expression> lhs, rhs;
+  std::shared_ptr<Expression> lhs, rhs;
   std::string operatorname;
 };
 
 struct TernaryExpression : Expression {
-  std::unique_ptr<Expression> lhs, rhs;
+  std::shared_ptr<Expression> lhs, rhs;
   std::string operatorname;
 };
 
-expression ::= name [ ( '(' expression { ',' expression } ')' | '{' expression { ',' expression } '}' ) ]
-             | immediate_value
-             | expression binary_op expression
-             | unary_prefix_op expression
-             | expression unary_postfix_op
-             | name '(' [ expression { ',' expression } ] ')'
-             | name '{' [ expression { ',' expression } ] '}'
-             | variable_declaration
-             | unary_operator expression
+struct FunctionCall : Expression {
+  std::vector<std::shared_ptr<Expression>> arguments;
+};
 
-struct Statement : Declaration {};
+struct NamedExpression : Expression {
+  std::string name;
+};
+
+struct ImmediateValue : Expression {
+  std::string value;
+}; 
 
 struct ExpressionStatement : Statement {
-  std::unique_ptr<Expression> value;
+  std::shared_ptr<Expression> value;
 };
 
 struct ReturnStatement : Statement {
-  std::unique_ptr<Expression> value;
+  std::shared_ptr<Expression> value;
 };
 
 struct Loop : Statement {
-  std::unique_ptr<Expression> loopCondition;
+  std::shared_ptr<Expression> loopCondition;
   Scope body;
 };
 
 struct Conditional : Statement {
-  std::unique_ptr<Expression> condition;
+  std::shared_ptr<Expression> condition;
   Scope positive;
   Scope negative;
 };

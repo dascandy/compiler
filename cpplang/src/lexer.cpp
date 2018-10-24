@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "cpplang/lexer.hpp"
 #include <unordered_map>
 
 static std::unordered_map<Type, std::string_view> token_names = {

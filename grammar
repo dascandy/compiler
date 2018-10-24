@@ -2,13 +2,11 @@
 toplevel_statement ::= variable_declaration ';'
                      | function
 
-function ::= [ 'static' | 'virtual' ] type function_prototype cv_qualifier [ 'noexcept' ] [ 'override' ] ( scope_body | ';' )
-constructor ::= function_prototype ( ';' | [ initializer_list ] scope_body )
 
 initializer_list ::= ':' initializer_list_entry { ',' initializer_list_entry }
 initializer_list_entry ::= name '(' expression ')'
 
-function_prototype ::= name '(' [ variable_declaration { ',' variable_declaration } ] ')' 
+function ::= [ 'static' | 'virtual' ] [ type ] name '(' [ variable_declaration { ',' variable_declaration } ] ')' cv_qualifier [ 'noexcept' ] [ 'override' ] ( ';' | [ initializer_list ] scope_body )
 
 variable_declaration ::= type [ name ] [ '=' expression ]
 
@@ -40,10 +38,6 @@ expression ::= name [ ( '(' expression { ',' expression } ')' | '{' expression {
              | expression binary_op expression
              | unary_prefix_op expression
              | expression unary_postfix_op
-             | name '(' [ expression { ',' expression } ] ')'
-             | name '{' [ expression { ',' expression } ] '}'
-             | variable_declaration
-             | unary_operator expression
 
 name ::= 'operator' ( any_overloadable_operator | 'new' [ '[' ']' ] | 'delete' [ '[' ']' ] | '"' '"' name | type )
        | string_literal

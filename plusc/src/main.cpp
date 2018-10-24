@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include "cpplang/lexer.h"
 #include <iostream>
 
 int main(int argc, char** argv) {
