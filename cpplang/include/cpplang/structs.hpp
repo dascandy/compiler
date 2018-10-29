@@ -1,3 +1,10 @@
+#pragma once
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <memory>
+#include <cstddef>
+#include <cstdint>
 
 namespace Language {
 
@@ -9,6 +16,13 @@ struct Declaration {
     Private,
   } accessor = Public;
   std::string name;
+  std::string mangling = "CXX";
+  bool external = false;
+};
+
+struct Scope {
+  // TODO: make this a variant?
+  std::vector<std::unique_ptr<Declaration>> declarations;
 };
 
 struct Type {};
@@ -37,15 +51,11 @@ struct Function : Declaration {
   bool isOverride;
   bool isConst;
   bool isVolatile;
-  std::vector<Variable> argumentlist;
+  std::vector<Variable> argumentList;
   std::unordered_map<std::string, std::shared_ptr<Expression>> initializerlist;
   std::unique_ptr<Scope> body;
 };
  
-struct Scope {
-  std::vector<std::unique_ptr<Declaration>> declarations;
-};
-
 struct NamedType : Type {
   std::string name;
 };
@@ -119,5 +129,7 @@ struct Conditional : Statement {
   Scope positive;
   Scope negative;
 };
+
+}
 
 

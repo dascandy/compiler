@@ -3,6 +3,6 @@
 #include "structs.hpp"
 #include "Lexer.hpp"
 
-Namespace Parse(Lexer lexer);
+Language::Namespace Parse(Lexer lexer);
 
 

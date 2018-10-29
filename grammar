@@ -1,7 +1,8 @@
 
-toplevel_statement ::= variable_declaration ';'
-                     | function
+toplevel_statement ::= [ extern_decl ] variable_declaration ';'
+                     | [ extern_decl ] function
 
+extern_decl ::= 'extern' [ string ]
 
 initializer_list ::= ':' initializer_list_entry { ',' initializer_list_entry }
 initializer_list_entry ::= name '(' expression ')'
